@@ -2,7 +2,7 @@ const phrases = require('./helper')
 const TelegramApi = require('node-telegram-bot-api')
 const heartEmoji = '\u2764\uFE0F';
 const inLoveEmoji = '\u{1F60D}'
-const token = '6877742053:AAFlDwXpoJiiuCL_tUpiCEqKFzQN9FHVqyM'
+const token = 'telegram-bot-token'
 
 const bot = new TelegramApi(token, { polling: true })
 
