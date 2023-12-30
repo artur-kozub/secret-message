@@ -1,3 +1,5 @@
+// The bot may be accessed at @secretMessageForNastya_bot
+
 const phrases = require('./helper')
 const TelegramApi = require('node-telegram-bot-api')
 const heartEmoji = '\u2764\uFE0F';
@@ -6,17 +8,20 @@ const token = 'telegram-bot-token'
 
 const bot = new TelegramApi(token, { polling: true })
 
+// Generates a random message from array
 const messageGenerator = (arr) => {
     const randInt = Math.floor(Math.random() * 20)
 
     return arr[randInt];
 }
 
+// Setting start and info commands for bot
 bot.setMyCommands([
     { command: '/start', description: 'Для початку' },
     { command: '/info', description: 'Інформація про бот' },
 ])
 
+// Handling bot logic, messages sending etc.
 bot.on('message', async msg => {
     const text = msg.text;
     const chatId = msg.chat.id;
