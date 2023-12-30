@@ -6,6 +6,6 @@ Simple to use, helper.js file is contains array with phrases may be replaced wit
 It looks like as follows:
 ![](bot.gif)
 
-**Technologies**: *JavaScript, Node.js, Telegram bot API*
+**Technologies**: *JavaScript, Node.js, Telegram bot API, Express.js (within deployment)*
 
 Thank you :)
