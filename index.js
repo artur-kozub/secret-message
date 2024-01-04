@@ -24,7 +24,7 @@ const bot = new TelegramApi(token, { polling: true });
 
 // Generates a random message from array
 const messageGenerator = (arr) => {
-  const randInt = Math.floor(Math.random() * arr.length);
+    const randInt = Math.floor(Math.random() * 20);
 
   return arr[randInt];
 };
