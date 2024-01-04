@@ -6,25 +6,12 @@ const heartEmoji = "\u2764\uFE0F";
 const inLoveEmoji = "\u{1F60D}";
 const token = "6877742053:AAFlDwXpoJiiuCL_tUpiCEqKFzQN9FHVqyM";
 
-// Server for deployment
-const express = require("express");
-const app = express();
-
-app.get("/", (req, res) => {
-  res.send("I am the bot server :)");
-});
-
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
-
 // Create a bot
 const bot = new TelegramApi(token, { polling: true });
 
 // Generates a random message from array
 const messageGenerator = (arr) => {
-    const randInt = Math.floor(Math.random() * 20);
+  const randInt = Math.floor(Math.random() * 20);
 
   return arr[randInt];
 };
@@ -40,7 +27,7 @@ bot.on("message", async (msg) => {
   const text = msg.text;
   const chatId = msg.chat.id;
   const message = messageGenerator(phrases);
-  const hour = 3600000;
+  const halfHour = 1800000;
 
   if (text === "/start") {
     await bot.sendSticker(
@@ -55,14 +42,18 @@ bot.on("message", async (msg) => {
     setInterval(() => {
       const message = messageGenerator(phrases);
       bot.sendMessage(chatId, message);
-    }, hour);
+    }, halfHour);
   } else if (text === "/info") {
     await bot.sendMessage(
       chatId,
       "Я створив цей бот для того щоб тобі не було сумно, якщо мене не буде поруч" +
       inLoveEmoji +
-      "\n\nПоки що він реагує тільки коли ти надсилаєш повідомлення. Це може бути будь-що, навіть літера або картинка чи файл\nТакож після команди /start бот запускається і відправляє тобі повідомлення кожну годину.\nАле ця відправка закінчиться, якщо ти напишеш що-небудь боту\nДля відновлення цієї розсилки, просто відправ команду /start боту і він почне слати повідомлення кожну годину",
+      "\n\nПоки що він реагує тільки коли ти надсилаєш повідомлення. Це може бути будь-що, навіть літера або картинка чи файл\nТакож після команди /start бот запускається і відправляє тобі повідомлення кожнші півгодини.\nАле ця відправка закінчиться, якщо ти напишеш що-небудь боту\nДля відновлення цієї розсилки, просто відправ команду /start боту і він почне слати знову",
     );
+    setInterval(() => {
+      const message = messageGenerator(phrases);
+      bot.sendMessage(chatId, message);
+    }, halfHour);
   } else {
     await bot.sendMessage(chatId, message);
   }
