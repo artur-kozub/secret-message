@@ -47,6 +47,7 @@ bot.on('location', async (msg) => {
   const { latitude, longitude } = msg.location;
 
   try {
+    // database interaction
     const isExists = await db.oneOrNone('SELECT * FROM user_data WHERE username = $1', username);
 
     if (isExists == null) {
@@ -68,6 +69,7 @@ bot.on('location', async (msg) => {
   }
 });
 
+// answering to the button at /start command
 bot.on('callback_query', (query) => {
   const chatId = query.message.chat.id
   bot.sendMessage(chatId, getRandomMessage())

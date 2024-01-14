@@ -80,7 +80,7 @@ const phrases = [
 ];
 
 const getWeather = async (latitude, longitude) => {
-    const apiKey = '68cbb8d93e2c85408708cb3bb507d376'
+    const apiKey = 'your-weatherapi-token'
     const apiUrl = 'https://api.openweathermap.org/data/2.5/weather'
   
     try {
