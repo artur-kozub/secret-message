@@ -1,3 +1,5 @@
+const axios = require('axios')
+const schedule = require('node-schedule')
 
 const phrases = [
     'Ти найкрасивіша жінка на світі',
@@ -71,12 +73,133 @@ const phrases = [
     'Ти - моя доля, що змінила моє життя.',
     'Ти - моя надія на краще майбутнє.',
     'Ти - моя мелодія, що звучить у серці.',
-    'Ти - моє незабутнє пригода.',
+    'Ти - моє незабутня пригода.',
     'Ти - моє кохання, що розцвітає кожен день.',
     'Я завжди буду тут для тебе.',
     'Ти - моя вся сутність, моє все.'
 ];
 
+const getWeather = async (latitude, longitude) => {
+    const apiKey = '68cbb8d93e2c85408708cb3bb507d376'
+    const apiUrl = 'https://api.openweathermap.org/data/2.5/weather'
+  
+    try {
+      const response = await axios.get(apiUrl, {
+        params: {
+          lat: latitude,
+          lon: longitude,
+          appid: apiKey
+        }
+      })
+      const weatherData = response.data
+  
+      if (weatherData.weather && weatherData.weather[0] && weatherData.weather[0].description) {
+        const kelvin = weatherData.main.temp
+        const celsius = Math.floor(kelvin - 273.15)
+        if (celsius <= 5) {
+          const weatherMessage = `Сьогодні холодно ${celsius}°C, одягайся тепліше`
+          return weatherMessage
+        } else if (celsius > 5 && celsius <= 12) {
+          const weatherMessage = `Прохолодно ${celsius}°C`
+          return weatherMessage
+        } else if (celsius > 12 && celsius <= 24) {
+          const weatherMessage = `Сьогодні комфортна погода ${celsius}°C`
+          return weatherMessage
+        } else {
+          const weatherMessage = `Спека ${celsius}°C`
+          return weatherMessage
+        }
+      } else {
+        console.error('Unexpected weather data structure:', weatherData);
+        return 'Sorry, I couldn\'t fetch the weather at the moment.';
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error.message)
+      return 'Sorry I was unable to fetch data'
+    }
+  }
 
+  const getRandomMessage = () => {
+    return phrases[Math.floor(Math.random() * phrases.length)]
+  }
 
-module.exports = phrases;
+  const sendRandomMessage = (bot, chatId) => {
+    bot.sendMessage(chatId, getRandomMessage())
+  }
+
+  const setCommands = (bot) => {
+    bot.setMyCommands([
+      { command: "/start", description: "Для початку" },
+      { command: "/care", description: "Турбота" },
+      { command: "/info", description: "Інфо"},
+    ])
+  }
+
+  const sendStartMessage = (bot, msg) => {
+    const chatId = msg.chat.id;
+    const firstName = msg.from.first_name;
+    const startMessage = `Привіт ${firstName}! Я твій бот. Натискай`;
+  
+    bot.sendMessage(chatId, startMessage, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: 'Секретне послання', callback_data: '1' }
+          ],
+        ],
+      },
+    });
+  };
+
+  const sendCareMessage = (bot, msg) => {
+    const chatId = msg.chat.id;
+    const opts = {
+      reply_markup: JSON.stringify({
+        keyboard: [
+          [{ text: 'Allow Location', request_location: true }],
+        ],
+        resize_keyboard: true,
+        one_time_keyboard: true,
+      }),
+    };
+    bot.sendMessage(chatId, 'Відправ свою локацію', opts);
+  };
+
+  const sendInfoMessage = (bot, msg) => {
+    const chatId = msg.chat.id;
+    const infoMessage = '/start - бот надсилає раз на день і кнопка секрет\n/care - бот запитує геолокацію і надсилає погоду кожного ранку'
+    bot.sendMessage(chatId, infoMessage);
+  };
+
+  const scheduleJobs = (bot, chatId) => {
+    const job = schedule.scheduleJob({ hour: 12, minute: 0 }, () => {
+      sendRandomMessage(bot, chatId);
+    });
+  
+    const jobForTesting = schedule.scheduleJob('* * * * *', () => {
+      console.log('Job ran at:', new Date());
+    });
+  };
+
+  const sendWeather = async (bot, chatId, latitude, longitude) => {
+    try {
+      const weatherMessage = await getWeather(latitude, longitude);
+      await bot.sendMessage(chatId, weatherMessage);
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+      await bot.sendMessage(chatId, 'Sorry, something went wrong, contact Artur');
+    }
+  };
+
+module.exports = {
+    phrases,
+    getWeather,
+    getRandomMessage,
+    sendRandomMessage,
+    setCommands,
+    sendStartMessage,
+    scheduleJobs,
+    sendCareMessage,
+    sendWeather,
+    sendInfoMessage,
+}
