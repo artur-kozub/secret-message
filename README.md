@@ -12,7 +12,7 @@ message and the bot will send 1 message daily at the fixed time (14:00 by Kyiv);
 
 The bot looks as follows:
 
-![](bot.gif)
+//waiting for .gif
 
 
 > **Technologies**:
