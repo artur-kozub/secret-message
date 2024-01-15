@@ -12,8 +12,7 @@ message and the bot will send 1 message daily at the fixed time (14:00 by Kyiv);
 
 The bot looks as follows:
 
-//waiting for .gif
-
+<img src="bot.gif" alt="Bot GIF" width="644" height="299">
 
 > **Technologies**:
 > *Node.js,
