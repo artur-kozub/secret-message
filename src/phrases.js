@@ -74,6 +74,6 @@ const phrases = [
     'Ти - моє кохання, що розцвітає кожен день.',
     'Я завжди буду тут для тебе.',
     'Ти - моя вся сутність, моє все.'
-];
+]
 
-module.exports = phrases;
+module.exports = phrases

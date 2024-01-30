@@ -1,15 +1,14 @@
 const axios = require('axios')
-const phrases = require('./phrases')
+const phrases = require('./src/phrases')
 const emoji = require('node-emoji')
-const quotes = require('./quotes')
-
+const quotes = require('./src/quotes')
+require('dotenv').config();
 const pgp = require('pg-promise')()
-
-const DATABASE_URL = 'db-url'
+const DATABASE_URL = process.env.DATABASE_URL
 const db = pgp(DATABASE_URL)
 
 const getWeather = async (latitude, longitude) => {
-  const apiKey = 'openweather-token'
+  const apiKey = process.env.OPEN_WEATHER_KEY
   const apiUrl = 'https://api.openweathermap.org/data/2.5/weather'
 
   try {
@@ -25,16 +24,16 @@ const getWeather = async (latitude, longitude) => {
     const kelvin = weatherData.main.temp
     const celsius = Math.floor(kelvin - 273.15)
     if (celsius <= 3) {
-      const weatherMessage = `🥶 Бррр! Сьогодні холодно ${celsius}°C одягайся тепліше`
+      const weatherMessage = `🥶 Бррр! Сьогодні холодно - ${celsius}°C одягайся тепліше`
       return weatherMessage
     } else if (celsius > 3 && celsius <= 12) {
-      const weatherMessage = `🆒 Прохолодно ${celsius}°C. Бажано продумати свій аутфіт 👘`
+      const weatherMessage = `🆒 Прохолодно - ${celsius}°C. Бажано продумати свій аутфіт 👘`
       return weatherMessage
     } else if (celsius > 12 && celsius <= 24) {
       const weatherMessage = `😎 Сьогодні комфортна погода - ${celsius}°C`
       return weatherMessage
     } else {
-      const weatherMessage = `🥵 Уф! Спека ${celsius}°C`
+      const weatherMessage = `🥵 Уф! Спека - ${celsius}°C`
       return weatherMessage
     }
   } catch (error) {
@@ -56,10 +55,10 @@ const getRandomMessageForNastya = () => {
 const setCommands = (bot) => {
   bot.setMyCommands([
     { command: "/start", description: "Для початку" },
+    { command: "/film", description: "Пошук фільму" },
     { command: "/care", description: "Турбота" },
     { command: "/info", description: "Інфо" },
     { command: "/users", description: "Користувачі" },
-    { command: "/film", description: "Пошук фільму" },
   ])
 }
 
@@ -75,7 +74,7 @@ const sendStartMessage = (bot, msg) => {
   const firstName = msg.from.first_name;
   const loveEmoji = emoji.get('heart')
   const secretEmoji = emoji.get('love_letter')
-  const startMessageNastya = `${loveEmoji} Привіт ${firstName}! Я твій бот. Натискай`;
+  const startMessageNastya = `${loveEmoji} Привіт ${firstName}! Я твій бот. Натискай`
   const startMessage = `👋 Привіт ${firstName}! Я твій бот. Натискай`
 
   if (chatId === 606289979) {
@@ -114,7 +113,7 @@ const sendCareMessage = (bot, msg) => {
       one_time_keyboard: true,
     }),
   };
-  bot.sendMessage(chatId, earthEmoji + 'Відправ свою локацію', opts);
+  bot.sendMessage(chatId, earthEmoji + 'Відправ свою локацію', opts)
 };
 
 const sendInfoMessage = (bot, msg) => {
@@ -124,16 +123,18 @@ const sendInfoMessage = (bot, msg) => {
 
 🌍 /care - запитує геолокацію і надсилає погоду кожного ранку
 
-👥 /users - надсилає актуальне число користувачів бота`
-  bot.sendMessage(chatId, infoMessage);
+👥 /users - надсилає актуальне число користувачів бота
+
+🎞️ /film - шукає постер, назву і опис фільму (англійською)`
+  bot.sendMessage(chatId, infoMessage)
 };
 
 const sendWeather = async (bot, chatId, latitude, longitude) => {
   try {
-    const weatherMessage = await getWeather(latitude, longitude);
-    await bot.sendMessage(chatId, weatherMessage);
+    const weatherMessage = await getWeather(latitude, longitude)
+    await bot.sendMessage(chatId, weatherMessage)
   } catch (error) {
-    console.error(`Error sending weather message to ${chatId}:`, error.message);
+    console.error(`Error sending weather message to ${chatId}:`, error.message)
 
     if (error.response && error.response.status === 403) {
       console.log(`User ${chatId} has blocked the bot. Handle accordingly.`);
@@ -143,10 +144,6 @@ const sendWeather = async (bot, chatId, latitude, longitude) => {
   }
 };
 
-const getGenres = async () => {
-
-}
-
 const sendFilmMessage = (bot, chatId) => {
   const genreKeyboard = {
       reply_markup: {
@@ -154,7 +151,7 @@ const sendFilmMessage = (bot, chatId) => {
           [
             {text: 'Екшн', callback_data: 'Action'},
             {text: 'Пригоди', callback_data: 'Adventure'},
-            {text: 'Мульт', callback_data: 'Animation'},            
+            {text: 'Анімований', callback_data: 'Animation'},            
           ],
           [
             {text: 'Комедія', callback_data: 'Comedy'},
@@ -184,7 +181,7 @@ const sendFilmMessage = (bot, chatId) => {
         ] 
   }
 }
-  bot.sendMessage(chatId, '🎥 Пошук фільму, обери жанр:', genreKeyboard)
+  bot.sendMessage(chatId, '🔍 Пошук фільму, обери жанр:', genreKeyboard)
 }
 
 module.exports = {
