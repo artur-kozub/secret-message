@@ -1,4 +1,4 @@
-# secret-message ㊙️
+# secret-message - <a href="https://t.me/secretMessageForNastya_bot">link</a> ㊙️
 ## Telegram bot that takes care of you, able to find you a film and motivate you through the day 🤖
 
 General list of commands and description:
