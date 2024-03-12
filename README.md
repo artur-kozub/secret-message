@@ -13,15 +13,15 @@ message and will send 2 messages daily at the fixed time (11:00 and 16:00 by Kyi
 
 🚀 **/start command:**
 
-<img src="img/start.gif" alt="Start GIF" width="644" height="299">
+<img src="img/start.gif" alt="Start GIF" width="644" height="330">
 
 🎥 **/film command:**
 
-<img src="img/film.gif" alt="Start GIF" width="644" height="299">
+<img src="img/film.gif" alt="Start GIF" width="644" height="450">
 
 🧑‍🤝‍🧑 **/users command:**
 
-<img src="img/users.gif" alt="Start GIF" width="644" height="299">
+<img src="img/users.gif" alt="Start GIF" width="644" height="340">
 
 > **Technologies**:
 > *Node.js,
