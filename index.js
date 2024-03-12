@@ -1,6 +1,3 @@
-// The bot may be accessed at @secretMessageForNastya_bot
-
-// importing modules (look helpers.js)
 const {
   db,
   getRandomMessage,
@@ -13,43 +10,36 @@ const {
   getRandomMessageForNastya,
   sendFilmMessage,
 } = require('./helpers')
-// for environment variables
+
 require('dotenv').config()
 const axios = require('axios')
 const TelegramApi = require('node-telegram-bot-api')
 const token = process.env.BOT_TOKEN
-// creating bot instance
+
 const bot = new TelegramApi(token, { polling: true })
 
-// setting up commands
 setCommands(bot)
 
-// start command
 bot.onText(/\/start/, (msg) => {
   sendStartMessage(bot, msg)
 })
 
-// care command
 bot.onText(/\/care/, (msg) => {
   sendCareMessage(bot, msg)
 })
 
-// info command
 bot.onText(/\/info/, (msg) => {
   sendInfoMessage(bot, msg)
 })
 
-// users command
 bot.onText(/\/users/, (msg) => {
   sendUsersMessage(bot, msg)
 })
 
-// film command
 bot.onText(/\/film/, (msg) => {
   sendFilmMessage(bot, msg.chat.id)
 })
 
-// handling location logic, adding to DB a new user or updating the old one
 bot.on('location', async (msg) => {
   const chatId = msg.chat.id
   const username = msg.chat.username || 'username_not_provided'
@@ -73,12 +63,10 @@ bot.on('location', async (msg) => {
   }
 });
 
-// handling logic for buttons at /start command and /film command
 bot.on('callback_query', async (query) => {
   const chatId = query.message.chat.id
   const buttonData = query.data
 
-  // creating genres map for randomization
   const genresIdMap = {
     'Action': 28,
     'Adventure': 12,
@@ -100,7 +88,6 @@ bot.on('callback_query', async (query) => {
     'Western': 37
   }
 
-  // pull the genre from user's choice
   const genreId = genresIdMap[buttonData]
 
   const tmdbKey = process.env.TMDB_KEY
@@ -109,9 +96,7 @@ bot.on('callback_query', async (query) => {
   const requestParams = `?api_key=${tmdbKey}&with_genres=${genreId}`
   const urlToFetch = `${tmdbBaseUrl}${discoverMovieEndpoint}${requestParams}`
 
-  // handling logic for /start button and another buttons in /film command
   if (buttonData == 'secret') {
-    // if this chatId content will be another
     if (chatId == 606289979) {
       bot.sendMessage(chatId, getRandomMessageForNastya())
     } else {
@@ -122,7 +107,6 @@ bot.on('callback_query', async (query) => {
       const response = await axios.get(urlToFetch)
       const movies = response.data.results
       
-      // randomizing film according to the chosen genre
       if (movies.length > 0) {
         const randomIndex = Math.floor(Math.random() * movies.length)
         const randomMovie = movies[randomIndex]
@@ -138,7 +122,6 @@ bot.on('callback_query', async (query) => {
           })
         }
       } else {
-        // if no films found
         bot.sendMessage(chatId, 'Не знайдено фільмів за цим жанром.')
       }
     } catch (error) {
