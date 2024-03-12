@@ -4,14 +4,12 @@ const axios = require('axios')
 require('dotenv').config()
 const token = process.env.BOT_TOKEN
 
-// sends scheduled message in the mornings 
 const sendScheduledMessage = async () => {
     const users = await db.manyOrNone('SELECT chat_id FROM user_data')
     const message = '🤓 Цитата дня: \n' + getRandomMessage()
     const messageForNastya = '💖 Нагадування дня для Насті: \n' + getRandomMessageForNastya()
     const endPoint = `https://api.telegram.org/bot${token}/sendMessage`
 
-    // iterating through users
     for (const user of users) {
         if (user.chat_id == 606289979) {
             axios.post(endPoint, {
