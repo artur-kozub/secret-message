@@ -1,17 +1,12 @@
 const axios = require('axios')
-// importing arrays with phrases/quotes needed
 const phrases = require('./src/phrases')
 const quotes = require('./src/quotes')
-// emodjis package
 const emoji = require('node-emoji')
-// for env variables
 require('dotenv').config()
-// for postgres
 const pgp = require('pg-promise')()
 const DATABASE_URL = process.env.DATABASE_URL
 const db = pgp(DATABASE_URL)
 
-// function to handle weather requests
 const getWeather = async (latitude, longitude) => {
   const apiKey = process.env.OPEN_WEATHER_KEY
   const apiUrl = 'https://api.openweathermap.org/data/2.5/weather'
@@ -26,11 +21,9 @@ const getWeather = async (latitude, longitude) => {
     })
     const weatherData = response.data
 
-    // converting received kelvin to celsius
     const kelvin = weatherData.main.temp
     const celsius = Math.floor(kelvin - 273.15)
 
-    // logic for message in accordance to temperature
     if (celsius <= 3) {
       const weatherMessage = `🥶 Бррр! Сьогодні холодно - ${celsius}°C одягайся тепліше`
       return weatherMessage
@@ -50,19 +43,16 @@ const getWeather = async (latitude, longitude) => {
   }
 }
 
-// random message for all users
 const getRandomMessage = () => {
   const emojis = [' 🤔', ' 🧠', ' 😉', ' 😎', ' 🌞', ' 🙂', ' 🤩', ' 🦦', ' ✨', ' 🎲', ' 🎨']
   return quotes[Math.floor(Math.random() * quotes.length)] + emojis[Math.floor(Math.random() * emojis.length)]
 }
 
-// random message for one particular user
 const getRandomMessageForNastya = () => {
   const emojis = [' 💖', ' ✨', ' 🥹', ' 🥰', ' 🌞', ' 🫶🏼', ' 😘', ' 😍', ' 💓']
   return phrases[Math.floor(Math.random() * phrases.length)] + emojis[Math.floor(Math.random() * emojis.length)]
 }
 
-// commands setupper
 const setCommands = (bot) => {
   bot.setMyCommands([
     { command: "/start", description: "Для початку" },
@@ -73,7 +63,6 @@ const setCommands = (bot) => {
   ])
 }
 
-// sends total amount of users
 const sendUsersMessage = async (bot, msg) => {
   const chatId = msg.chat.id
   const usersAmount = await db.many('SELECT COUNT(*) FROM user_data')
@@ -81,7 +70,6 @@ const sendUsersMessage = async (bot, msg) => {
   bot.sendMessage(chatId, `${emojiUser} Наразі бот має таку кількість користувачів: "${usersAmount[0].count}"`)
 }
 
-// sends message at /start command
 const sendStartMessage = (bot, msg) => {
   const chatId = msg.chat.id;
   const firstName = msg.from.first_name;
@@ -113,7 +101,6 @@ const sendStartMessage = (bot, msg) => {
   }
 }
 
-// location and weather handler
 const sendCareMessage = (bot, msg) => {
   const chatId = msg.chat.id;
   const compassEmoji = emoji.get('compass')
@@ -130,7 +117,6 @@ const sendCareMessage = (bot, msg) => {
   bot.sendMessage(chatId, earthEmoji + 'Відправ свою локацію', opts)
 }
 
-// /info command handler
 const sendInfoMessage = (bot, msg) => {
   const chatId = msg.chat.id;
   const infoMessage =
@@ -144,7 +130,6 @@ const sendInfoMessage = (bot, msg) => {
   bot.sendMessage(chatId, infoMessage)
 };
 
-// final weather sender
 const sendWeather = async (bot, chatId, latitude, longitude) => {
   try {
     const weatherMessage = await getWeather(latitude, longitude)
@@ -160,7 +145,6 @@ const sendWeather = async (bot, chatId, latitude, longitude) => {
   }
 };
 
-// for /film command
 const sendFilmMessage = (bot, chatId) => {
   const genreKeyboard = {
       reply_markup: {
@@ -201,7 +185,6 @@ const sendFilmMessage = (bot, chatId) => {
   bot.sendMessage(chatId, '🔍 Пошук фільму, обери жанр:', genreKeyboard)
 }
 
-// exporting modules
 module.exports = {
   db,
   sendUsersMessage,
