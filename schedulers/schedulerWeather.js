@@ -5,12 +5,9 @@ const axios = require('axios')
 require('dotenv').config()
 const token = process.env.BOT_TOKEN
 
-// to send random message twice a day
 const schedulerWeather = async () => {
   const endPoint = `https://api.telegram.org/bot${token}/sendMessage`
 
-
-  // iterating through all users
   db.manyOrNone('SELECT DISTINCT chat_id, latitude, longitude FROM user_data')
     .then((users) => {
       users.forEach(async (user) => {
